@@ -1,4 +1,5 @@
 # Arxiv每日推送(更新中)
+灵感来源：https://github.com/kobiso/get-daily-arxiv-noti ，非常感谢大佬！
 目前仅支持Telegram机器人
 
 ## 需要参数
