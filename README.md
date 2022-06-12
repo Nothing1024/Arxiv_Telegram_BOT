@@ -1,6 +1,7 @@
 # Arxiv每日推送(更新中)
 灵感来源：https://github.com/kobiso/get-daily-arxiv-noti ，非常感谢大佬！
 
+感谢[@cddchen](https://github.com/cddchen)的PR（多渠道推送
 
 TG机器人使用[pyTelegramBotAPI](https://github.com/eternnoir/pyTelegramBotAPI)
 
