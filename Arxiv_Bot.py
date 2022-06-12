@@ -1,5 +1,6 @@
 import requests
 import telebot
+import notify
 from bs4 import BeautifulSoup
 ARXIV_BASE = "https://arxiv.org/"
 NEW_SUB_URL = 'https://arxiv.org/list/cs/new'
@@ -39,13 +40,20 @@ def TG_BOT_Push(today_title,keyword_list,paper,keyword_dict):
         full_report.append(report)
         return full_report
 
-    tb = telebot.TeleBot(TOKEN)
+    if TOKEN != '':
+        tb = telebot.TeleBot(TOKEN)
     try:
         for i in TG_BOT_formatter(today_title,keyword_list,paper,keyword_dict):
-            tb.send_message(chat_id=CHAT_ID, text=i, parse_mode = "Markdown")
+            if TOKEN == '':
+                notify.send(title='Arxiv每日播报', content=i)
+            else: 
+                tb.send_message(chat_id=CHAT_ID, text=i, parse_mode = "Markdown")
     except Exception as e:
         print("爬取失败",e.__str__())
-        tb.send_message(chat_id=CHAT_ID, text=str(e.__str__()))
+        if TOKEN == '':
+            notify.send(title='Arxiv每日播报', content=str(e.__str__()))
+        else:
+            tb.send_message(chat_id=CHAT_ID, text=str(e.__str__()))
 
 def getArxivMeta():
     header = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.105 Safari/537.36'}
