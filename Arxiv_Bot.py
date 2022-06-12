@@ -1,5 +1,4 @@
 import requests
-import telebot
 import notify
 from bs4 import BeautifulSoup
 ARXIV_BASE = "https://arxiv.org/"
@@ -10,14 +9,12 @@ I18N_LIBRARY = {
 }
 
 # 自定义配置
-TOKEN = '' # TG机器人Token
 KEYWORD_LIST = ["Action Recognition", "transformer"] # 查询关键字，大小写均可
 I18N_DICT = I18N_LIBRARY["Chinese"] #多语言选择 中文或英文
-CHAT_ID = 123456789 # 推送用户ID
 
 
-def TG_BOT_Push(today_title,keyword_list,paper,keyword_dict):
-    def TG_BOT_formatter(today_title,keyword_list,paper,keyword_dict):
+def TG_BOT_Push(today_title,keyword_list,keyword_dict):
+    def TG_BOT_formatter(today_title,keyword_list,keyword_dict):
         full_report = []
 
         def checkWordLimit(report, update):
@@ -40,20 +37,12 @@ def TG_BOT_Push(today_title,keyword_list,paper,keyword_dict):
         full_report.append(report)
         return full_report
 
-    if TOKEN != '':
-        tb = telebot.TeleBot(TOKEN)
     try:
-        for i in TG_BOT_formatter(today_title,keyword_list,paper,keyword_dict):
-            if TOKEN == '':
-                notify.send(title='Arxiv每日播报', content=i)
-            else: 
-                tb.send_message(chat_id=CHAT_ID, text=i, parse_mode = "Markdown")
+        for i in TG_BOT_formatter(today_title,keyword_list,keyword_dict):
+            notify.send(title=I18N_DICT["Title"], content=i)
     except Exception as e:
-        print("爬取失败",e.__str__())
-        if TOKEN == '':
-            notify.send(title='Arxiv每日播报', content=str(e.__str__()))
-        else:
-            tb.send_message(chat_id=CHAT_ID, text=str(e.__str__()))
+        print("推送失败",e.__str__())
+        notify.send(title='Arxiv每日播报推送失败', content=str(e.__str__()))
 
 def getArxivMeta():
     header = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.105 Safari/537.36'}
@@ -93,7 +82,7 @@ def getArxivMeta():
                     keyword_dict[keyword].append(paper)
     except Exception as e:
         print("爬取失败",e.__str__())
-    return today_title,keyword_list,paper,keyword_dict        
+    return today_title,keyword_list,keyword_dict        
 
 def main():
     TG_BOT_Push(*getArxivMeta())
